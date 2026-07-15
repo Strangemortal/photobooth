@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Photobooth — After Dark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="css/core.css" />
+<link rel="stylesheet" href="css/animations.css" />
+<link rel="stylesheet" href="css/outside.css" />
+<link rel="stylesheet" href="css/curtain.css" />
+<link rel="stylesheet" href="css/booth.css" />
+<link rel="stylesheet" href="css/inside.css" />
+<link rel="stylesheet" href="css/controls.css" />
+<link rel="stylesheet" href="css/printer.css" />
+<link rel="stylesheet" href="css/theme-japanese-light.css" />
+<link rel="stylesheet" href="css/toggle.css" />
+</head>
+<body>
+
+<!-- ============================================================= -->
+<!-- Loading screen                                                -->
+<!-- ============================================================= -->
+<div id="loading" class="loading">
+  <div class="loading__door" aria-hidden="true">
+    <div class="loading__door-light"></div>
+    <div class="loading__door-panel loading__door-panel--left"></div>
+    <div class="loading__door-panel loading__door-panel--right"></div>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- World: contains both scenes and the traveling camera rig      -->
+<!-- ============================================================= -->
+<div id="world" class="world">
+
+  <!-- The "camera rig" is what moves between scenes.
+       Scenes are children of the world, the rig is what transforms. -->
+  <div id="cameraRig" class="camera-rig">
+
+    <!-- ======================================================= -->
+    <!-- SCENE ONE: Outside the booth                             -->
+    <!-- ======================================================= -->
+    <section id="sceneOutside" class="scene scene--outside" aria-label="Outside the photobooth">
+
+      <!-- Atmospheric backdrop -->
+      <div class="outside__bg">
+        <div class="outside__floor"></div>
+        <div class="outside__wall"></div>
+        <div class="outside__vignette"></div>
+      </div>
+
+      <!-- Animated floating anime light particles -->
+      <div class="anime-particle anime-particle--1" aria-hidden="true"></div>
+      <div class="anime-particle anime-particle--2" aria-hidden="true"></div>
+      <div class="anime-particle anime-particle--3" aria-hidden="true"></div>
+
+      <!-- The booth machine itself -->
+      <div id="booth" class="booth">
+
+        <!-- Roof / cornice -->
+        <div class="booth__cornice">
+          <div class="booth__cornice-trim"></div>
+        </div>
+
+        <!-- Neon sign — static mounted logo -->
+        <div id="neonSign" class="neon">
+          <div class="neon__tube">
+            <span class="neon__title-main">PHOTOBOOTH</span>
+          </div>
+          <div class="neon__backplate"></div>
+        </div>
+
+        <!-- Body of the machine -->
+        <div class="booth__body">
+
+          <!-- Left column (decorative) -->
+          <div class="booth__column booth__column--left">
+            <div class="booth__panel booth__panel--riveted"></div>
+            <div class="booth__vent">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <!-- Interactive draggable posters, bound inside this left column panel -->
+            <div class="booth__posters" aria-hidden="true">
+              <article class="booth-poster"><img src="assets/poster-01.png" alt="Poster 1"></article>
+              <article class="booth-poster"><img src="assets/poster-02.png" alt="Poster 2"></article>
+              <article class="booth-poster"><img src="assets/poster-03.png" alt="Poster 3"></article>
+              <article class="booth-poster"><img src="assets/poster-04.png" alt="Poster 4"></article>
+              <article class="booth-poster"><img src="assets/poster-05.png" alt="Poster 5"></article>
+              <article class="booth-poster"><img src="assets/poster-06.png" alt="Poster 6"></article>
+              <article class="booth-poster"><img src="assets/poster-07.png" alt="Poster 7"></article>
+              <article class="booth-poster"><img src="assets/poster-08.png" alt="Poster 8"></article>
+              <article class="booth-poster"><img src="assets/poster-09.png" alt="Poster 9"></article>
+              <article class="booth-poster"><img src="assets/poster-10.png" alt="Poster 10"></article>
+              <article class="booth-poster"><img src="assets/poster-11.png" alt="Poster 11"></article>
+              <article class="booth-poster"><img src="assets/poster-12.png" alt="Poster 12"></article>
+              <article class="booth-poster"><img src="assets/poster-13.png" alt="Poster 13"></article>
+              <article class="booth-poster"><img src="assets/poster-14.png" alt="Poster 14"></article>
+              <article class="booth-poster"><img src="assets/poster-15.png" alt="Poster 15"></article>
+            </div>
+          </div>
+
+          <!-- Center: curtain entrance -->
+          <div class="booth__entrance">
+            <div class="entrance__frame">
+              <div class="entrance__dark"></div>
+              <div class="curtain-hint">PULL CURTAIN<br><span>TO ENTER</span></div>
+              <!-- Curtain cloths live here, drawn by Matter.js render -->
+              <canvas id="curtainCanvas" class="curtain-canvas"></canvas>
+              <!-- The "interior dark" that swallows the user on entry -->
+              <div id="interiorDark" class="entrance__interior-dark"></div>
+            </div>
+          </div>
+
+          <!-- Right column (with sign + controls) -->
+          <div class="booth__column booth__column--right">
+
+            <!-- Printer slot -->
+            <div id="printerSlot" class="printer-slot" data-action="peek-strip">
+              <div class="printer-slot__lip"></div>
+              <div class="printer-slot__mouth"></div>
+              <div class="printer-slot__label">PHOTO BIN</div>
+            </div>
+
+            <!-- Pill-shaped theme toggle switch -->
+            <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark theme">
+              <span class="theme-toggle__knob">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+              </span>
+            </button>
+
+            <!-- Vending machine decal sticker (swapped below themeToggle) -->
+            <div class="booth-vending-decal">
+              <img src="assets/wending.png" alt="Vending Machine">
+            </div>
+
+          </div>
+
+        <!-- Base / feet -->
+        <div class="booth__base">
+          <div class="booth__foot booth__foot--left"></div>
+          <div class="booth__foot booth__foot--right"></div>
+        </div>
+
+        <!-- Tiny machine-vibration wrapper -->
+        <div class="booth__vibe" aria-hidden="true"></div>
+      </div>
+
+      <!-- Floor reflection / shadow -->
+      <div class="booth__shadow"></div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- SCENE TWO: Inside the booth                              -->
+    <!-- ======================================================= -->
+    <section id="sceneInside" class="scene scene--inside" aria-label="Inside the photobooth" hidden>
+      <div class="inside__shell">
+        <button id="exitBtn" class="inside__close-btn" type="button" aria-label="Exit booth">×</button>
+        <div class="inside__wall inside__wall--back"></div>
+        <div class="inside__wall inside__wall--left"></div>
+        <div class="inside__wall inside__wall--right"></div>
+        <div class="inside__wall inside__wall--top"></div>
+        <div class="inside__floor"></div>
+        <div class="inside__vignette"></div>
+
+        <div class="inside__chain inside__chain--left" aria-hidden="true"><span></span></div>
+        <div class="inside__chain inside__chain--right" aria-hidden="true"><span></span></div>
+
+        <div class="inside__stool" aria-hidden="true">
+          <div class="inside__stool-seat"></div>
+          <div class="inside__stool-leg inside__stool-leg--left"></div>
+          <div class="inside__stool-leg inside__stool-leg--right"></div>
+          <div class="inside__stool-crossbar"></div>
+        </div>
+
+        <!-- Camera viewfinder / preview -->
+        <div class="viewfinder">
+          <div class="viewfinder__frame">
+            <div class="viewfinder__corner viewfinder__corner--tl"></div>
+            <div class="viewfinder__corner viewfinder__corner--tr"></div>
+            <div class="viewfinder__corner viewfinder__corner--bl"></div>
+            <div class="viewfinder__corner viewfinder__corner--br"></div>
+            <video id="cameraVideo" class="viewfinder__video" autoplay playsinline muted></video>
+            <canvas id="captureCanvas" class="viewfinder__capture" hidden></canvas>
+            <div id="viewfinderReticle" class="viewfinder__reticle">
+              <span></span><span></span>
+            </div>
+          </div>
+          <div class="viewfinder__brand">PHOTOBOOTH · EST. 1958</div>
+        </div>
+
+        <!-- Sleek and clean flat-retro control panel buttons -->
+        <div class="control-panel">
+          <button id="captureBtn" class="inside-action-btn inside-action-btn--primary" type="button" aria-label="Take photo">
+            <span class="machine-btn__icon">●</span>
+            <span class="machine-btn__label">TAKE PHOTO</span>
+          </button>
+
+          <button id="modeBtn" class="inside-action-btn inside-action-btn--secondary" type="button" aria-label="Switch photo mode">
+            <span class="machine-btn__icon">1×</span>
+            <span class="machine-btn__label">1 PHOTO</span>
+          </button>
+        </div>
+
+        <!-- Glass backdrop overlay for preview mode (prevents stacking context blur bugs) -->
+        <div id="previewOverlay" class="preview-overlay" hidden></div>
+
+        <!-- Photo strip preview card overlay inside the booth (developing Polaroid effect) -->
+        <div id="stripPreview" class="strip-preview" hidden>
+          <div class="strip-preview__eyebrow">YOUR STRIP · DEVELOPING…</div>
+          <canvas id="previewCanvas" class="strip-preview__canvas"></canvas>
+          <div class="strip-preview__details" id="previewDetails">
+            <input id="previewName" class="strip-preview__input" type="text" maxlength="28" placeholder="YOUR NAME" autocomplete="off">
+            <input id="previewDateInput" class="strip-preview__input" type="date" aria-label="Add a date">
+            <button id="applyDetailsBtn" class="strip-preview__apply" type="button">ADD DETAILS</button>
+          </div>
+          
+          <!-- Printing actions nested directly inside the card overlay -->
+          <div class="printer-stage__actions" style="margin-top: 14px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; z-index: 10;">
+            <button id="downloadBtn" class="download-btn" type="button" disabled>
+              <span class="download-btn__rim"></span>
+              <span class="download-btn__cap">
+                <span class="download-btn__icon">↓</span>
+                <span class="download-btn__label">DOWNLOAD</span>
+              </span>
+            </button>
+
+            <button id="newPhotoBtn" class="new-photo-btn" type="button">
+              <span class="new-photo-btn__rim"></span>
+              <span class="new-photo-btn__cap">
+                <span class="new-photo-btn__icon">↻</span>
+                <span class="new-photo-btn__label">NEW PHOTO</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div><!-- /cameraRig -->
+
+  <!-- World-level veil — used to mask scene swaps during enter/exit -->
+  <div id="interiorVeil" class="interior-veil"></div>
+
+  <!-- ======================================================= -->
+  <!-- Countdown overlay                                        -->
+  <!-- ======================================================= -->
+  <div id="countdown" class="countdown" hidden>
+    <div class="countdown__ring"></div>
+    <div class="countdown__num" id="countdownNum">3</div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- Flash overlay                                            -->
+  <!-- ======================================================= -->
+  <div id="flash" class="flash"></div>
+
+
+
+
+
+  <!-- ======================================================= -->
+  <!-- Camera-permission / error toast                          -->
+  <!-- ======================================================= -->
+  <div id="toast" class="toast" hidden>
+    <div class="toast__icon">!</div>
+    <div class="toast__text" id="toastText"></div>
+  </div>
+
+</div><!-- /world -->
+
+<script src="lib/matter.min.js"></script>
+<script src="js/physics.js"></script>
+<script src="js/cloth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/countdown.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/paper.js"></script>
+<script src="js/strip.js"></script>
+<script src="js/printer.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

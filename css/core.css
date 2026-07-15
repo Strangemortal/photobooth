@@ -1,0 +1,170 @@
+/* ============================================================
+   Core layout and application overlays
+   Keeps the two scenes inside one viewport and ensures all
+   machine states layer correctly above the world.
+   ============================================================ */
+
+[hidden] { display: none !important; }
+
+.world {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.camera-rig {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Loading / transition veil -------------------------------- */
+.loading,
+.develop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  transition: opacity .6s ease, visibility .6s ease;
+}
+.loading.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+.loading__lamp,
+.develop__lamp {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--neon-amber);
+  box-shadow: 0 0 18px rgba(201, 66, 92, .45);
+  animation: ready-cycle 2.8s ease-in-out infinite;
+}
+.loading__text,
+.develop__title {
+  letter-spacing: .2em;
+  font-size: .8rem;
+}
+.loading__bar,
+.develop__bar {
+  width: min(260px, 62vw);
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  border-radius: 99px;
+}
+.loading__bar span,
+.develop__bar span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  animation: loading-progress 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes loading-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(240%); }
+}
+
+.develop { z-index: 80; }
+.develop__bar span { width: 0; animation: none; transition: width .35s ease; }
+.develop__status { font-family: var(--font-display); font-size: .7rem; letter-spacing: .12em; }
+
+.interior-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #1f2632;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .45s ease;
+}
+.interior-veil.is-visible { opacity: 1; }
+
+/* Capture feedback ----------------------------------------- */
+.countdown,
+.flash {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  pointer-events: none;
+}
+.countdown {
+  display: grid;
+  place-items: center;
+}
+.countdown__ring {
+  position: absolute;
+  width: min(250px, 48vw);
+  aspect-ratio: 1;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  opacity: .75;
+  animation: countdown-ring 1s ease-in-out infinite;
+}
+.countdown__num {
+  position: relative;
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(5rem, 15vw, 10rem);
+  line-height: 1;
+  animation: countdown-num 1s var(--ease-soft) both;
+}
+.flash {
+  background: #fff;
+  opacity: 0;
+}
+.flash.is-flashing { animation: flash-burst .14s ease-out both; }
+
+/* Small machine notice ------------------------------------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  opacity: 0;
+  transform: translate(-50%, 14px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+.toast__icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--neon-pink);
+  color: #fff;
+  font-weight: 900;
+}
+.toast__text { font-size: .78rem; line-height: 1.4; }
+
+button { font: inherit; }
+button:focus-visible {
+  outline: 3px solid var(--tungsten);
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .toast { bottom: 14px; }
+  .toast__text { font-size: .7rem; }
+}

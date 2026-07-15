@@ -1,0 +1,124 @@
+/* ============================================================
+   Photobooth — keyframe library
+   Idle, ambient, and transition animations.
+   ============================================================ */
+
+/* ----- Neon sign idle glow + flicker ------------------------ */
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 6px var(--neon-pink),
+      0 0 14px var(--neon-pink),
+      0 0 28px rgba(255,95,162,0.6),
+      0 0 50px rgba(255,95,162,0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 4px var(--neon-pink),
+      0 0 10px var(--neon-pink),
+      0 0 20px rgba(255,95,162,0.4);
+  }
+}
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow:
+      0 0 6px var(--neon-pink),
+      0 0 14px var(--neon-pink),
+      0 0 30px rgba(255,95,162,0.7),
+      0 0 60px rgba(255,95,162,0.4);
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+    text-shadow: 0 0 4px var(--neon-pink);
+  }
+}
+
+/* ----- READY indicator cycling ------------------------------ */
+@keyframes ready-cycle {
+  0%   { background: var(--neon-amber); box-shadow: 0 0 18px 4px var(--neon-amber); }
+  33%  { background: var(--neon-cyan);  box-shadow: 0 0 18px 4px var(--neon-cyan); }
+  66%  { background: var(--neon-pink);  box-shadow: 0 0 18px 4px var(--neon-pink); }
+  100% { background: var(--neon-amber); box-shadow: 0 0 18px 4px var(--neon-amber); }
+}
+
+/* ----- Machine micro-vibration ----------------------------- */
+@keyframes machine-vibe {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(0.4px, -0.3px); }
+  50%  { transform: translate(-0.3px, 0.4px); }
+  75%  { transform: translate(0.2px, 0.3px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ----- Curtain ambience (subtle, applied via canvas) ------- */
+/* (No CSS — physics-driven.) */
+
+/* ----- Hanging sign settle ---------------------------------- */
+/* (Physics-driven.)
+
+/* ----- Countdown number scale ------------------------------- */
+@keyframes countdown-ring {
+  0%   { transform: scale(0.95); opacity: 0.8; }
+  50%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+@keyframes countdown-num {
+  0%   { transform: scale(0.4); opacity: 0; }
+  20%  { transform: scale(1.2); opacity: 1; }
+  80%  { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.7); opacity: 0; }
+}
+
+/* ----- Flash burst ------------------------------------------ */
+@keyframes flash-burst {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ----- Viewfinder reticle drift ---------------------------- */
+@keyframes reticle-drift {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* ----- Printer motor hum ----------------------------------- */
+@keyframes motor-hum {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(-0.5px); }
+}
+
+/* ----- Printer lamp activity ------------------------------- */
+@keyframes printer-lamp-active {
+  0%, 100% { background: var(--neon-amber); box-shadow: 0 0 16px 4px var(--neon-amber); }
+  50%      { background: var(--tungsten-deep); box-shadow: 0 0 6px 1px var(--tungsten-deep); }
+}
+
+/* ----- Generic ease-in ------------------------------------- */
+@keyframes fade-rise {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ----- Button press depression ----------------------------- */
+@keyframes button-press {
+  0%   { transform: translateY(0); }
+  40%  { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+/* ----- Settings panel slide -------------------------------- */
+@keyframes settings-open {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
+/* ----- Coin plate shimmer ---------------------------------- */
+@keyframes coin-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Utility classes -------------------------------------------- */
+.anim-fade-rise { animation: fade-rise 0.5s var(--ease-soft) both; }

@@ -1,0 +1,214 @@
+/* ============================================================
+   SCENE TWO — Inside the photobooth
+   ============================================================ */
+
+.scene--inside {
+  background: #0a0604;
+}
+
+.inside__shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Walls ----------------------------------------------------- */
+.inside__wall {
+  position: absolute;
+  background:
+    linear-gradient(180deg, #3a2618 0%, #2a1810 50%, #1a0f08 100%);
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.7);
+}
+.inside__wall::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 24px, rgba(0,0,0,0.18) 24px 25px),
+    repeating-linear-gradient(90deg, transparent 0 40px, rgba(255,200,140,0.02) 40px 41px);
+}
+.inside__wall--back {
+  inset: 0;
+}
+.inside__wall--left,
+.inside__wall--right {
+  top: 0; bottom: 0;
+  width: 12vw;
+  background:
+    linear-gradient(90deg, #2a1810 0%, #1a0f08 100%);
+  z-index: 2;
+}
+.inside__wall--left  { left: 0; transform-origin: right center; }
+.inside__wall--right { right: 0; transform-origin: left center; }
+.inside__wall--top {
+  top: 0; left: 0; right: 0;
+  height: 10vh;
+  background: linear-gradient(180deg, #1a0f08 0%, #2a1810 100%);
+  z-index: 3;
+  border-bottom: 2px solid rgba(255,200,140,0.05);
+}
+
+/* Floor ----------------------------------------------------- */
+.inside__floor {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 16vh;
+  background: linear-gradient(180deg, #1a0f08 0%, #0a0604 100%);
+  border-top: 2px solid rgba(255,200,140,0.05);
+  z-index: 2;
+  perspective: 400px;
+  transform-style: preserve-3d;
+}
+.inside__floor::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 40px, rgba(0,0,0,0.4) 40px 41px),
+    repeating-linear-gradient(180deg, transparent 0 30px, rgba(0,0,0,0.3) 30px 31px);
+  transform: rotateX(60deg);
+  transform-origin: top;
+}
+
+/* Vignette -------------------------------------------------- */
+.inside__vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(0,0,0,0.85) 90%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ============================================================
+   Camera viewfinder
+   ============================================================ */
+.viewfinder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  width: min(560px, 60vw);
+  z-index: 5;
+}
+.viewfinder__frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: #000;
+  border: 8px solid var(--metal-dark);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 2px var(--ink),
+    0 0 40px rgba(255,178,74,0.15),
+    inset 0 0 30px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+.viewfinder__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Mirror for natural selfie feel */
+  transform: scaleX(-1);
+  background: #000;
+}
+.viewfinder__capture { display: none; }
+
+/* Corner brackets */
+.viewfinder__corner {
+  position: absolute;
+  width: 22px; height: 22px;
+  border: 2px solid var(--tungsten);
+  z-index: 3;
+  opacity: 0.7;
+}
+.viewfinder__corner--tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+.viewfinder__corner--tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+.viewfinder__corner--bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+.viewfinder__corner--br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+/* Center reticle */
+.viewfinder__reticle {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px; height: 60px;
+  z-index: 3;
+  pointer-events: none;
+  animation: reticle-drift 2.4s ease-in-out infinite;
+}
+.viewfinder__reticle span {
+  position: absolute;
+  background: rgba(255,206,90,0.7);
+}
+.viewfinder__reticle span:nth-child(1) {
+  top: 50%; left: 0; right: 0; height: 1px;
+  transform: translateY(-50%);
+}
+.viewfinder__reticle span:nth-child(2) {
+  left: 50%; top: 0; bottom: 0; width: 1px;
+  transform: translateX(-50%);
+}
+
+.viewfinder__brand {
+  position: absolute;
+  top: -28px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--cream-dark);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Readout — small status panel mounted on the wall
+   ============================================================ */
+.readout {
+  position: absolute;
+  top: 4%;
+  right: 4%;
+  z-index: 6;
+  background: linear-gradient(180deg, var(--ink) 0%, #050302 100%);
+  border: 2px solid var(--metal-dark);
+  padding: 10px 14px;
+  min-width: 120px;
+  box-shadow:
+    inset 0 0 12px rgba(0,0,0,0.7),
+    0 4px 12px rgba(0,0,0,0.5);
+  font-family: var(--font-display);
+}
+.readout__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(255,200,140,0.1);
+}
+.readout__row:last-child { border-bottom: none; }
+.readout__label { color: var(--cream-dark); }
+.readout__value { color: var(--tungsten); text-shadow: 0 0 6px rgba(255,178,74,0.5); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .viewfinder { width: 70vw; }
+  .readout { top: 2%; right: 2%; padding: 8px 10px; min-width: 100px; }
+  .readout__row { font-size: 0.5rem; }
+}
+
+@media (max-width: 600px) {
+  .viewfinder { width: 78vw; }
+  .viewfinder__brand { font-size: 0.55rem; top: -22px; }
+  .inside__wall--left,
+  .inside__wall--right { width: 6vw; }
+  .readout {
+    top: auto;
+    bottom: 90px;
+    right: 50%;
+    transform: translateX(50%);
+  }
+}
