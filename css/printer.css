@@ -407,5 +407,18 @@
 @media (max-width: 600px) {
   .printer-machine { width: 90vw; }
   .printer-machine__slot { height: 320px; }
-  .download-btn { width: 170px; height: 50px; }
+  /* Action buttons inside strip-preview: stack full-width on mobile */
+  .strip-preview .printer-stage__actions {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .download-btn,
+  .new-photo-btn {
+    width: 100% !important;
+    height: 48px;
+  }
+  .download-btn__label,
+  .new-photo-btn__label {
+    font-size: 0.75rem;
+  }
 }

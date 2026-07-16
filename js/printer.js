@@ -474,10 +474,14 @@ window.Printer = (function () {
     const filterEl = document.getElementById('filterSelect');
     if (filterEl) filterEl.value = 'vintage';
 
+    // Download needs details first; New Photo is always available
     downloadBtn().disabled = true;
     downloadBtn().classList.remove('is-ready');
-    document.getElementById('newPhotoBtn').classList.remove('is-ready');
     applyDetailsBtn().textContent = 'ADD DETAILS';
+    
+    // newPhotoBtn is always immediately visible so user can restart
+    const newBtn = document.getElementById('newPhotoBtn');
+    if (newBtn) newBtn.classList.add('is-ready');
     
     _drawDevelopingPolaroid();
   }

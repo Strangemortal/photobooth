@@ -654,9 +654,22 @@ body::before {
   }
   .inside__stool { width: 150px; height: 130px; bottom: 11%; }
   .viewfinder { width: 84vw !important; }
-  .strip-preview { width: min(400px, 92vw); padding: 14px 12px; }
-  .strip-preview__canvas { width: min(150px, 40vw); height: auto !important; }
-  .strip-preview__details { grid-template-columns: 1fr 1fr; }
+  .strip-preview {
+    width: min(400px, 96vw);
+    padding: 12px 10px;
+    /* Never taller than the screen — scroll inside */
+    max-height: 92dvh;
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Slight tilt looks off on tiny screens */
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+  }
+  .strip-preview__canvas { width: min(130px, 36vw); height: auto !important; }
+  .strip-preview__details {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
   .strip-preview__apply { grid-column: 1 / -1; }
 }
 
