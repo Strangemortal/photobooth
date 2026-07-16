@@ -9,7 +9,7 @@ window.Cloth = (function () {
   class Cloth {
     constructor(canvas, opts) {
       this.canvas = canvas;
-      this.active = false;
+      this.active = false;                    
       this.time = 0;
 
       this.opts = Object.assign({
