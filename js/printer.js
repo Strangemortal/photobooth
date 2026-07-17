@@ -614,25 +614,23 @@ window.Printer = (function () {
 
       // Find the dark mouth opening inside the slot
       const mouthEl = slotEl.querySelector('.printer-slot__mouth') || slotEl;
-      const mouthRect = mouthEl.getBoundingClientRect();
-
-      // Strip width = exact mouth width
-      const stripW = Math.round(mouthRect.width);
-      // Natural aspect ratio of the strip canvas
-      const aspect  = stripCanvas.height / stripCanvas.width;
-      const stripH  = Math.round(stripW * aspect);
+      
+      // Use offset measurements instead of getBoundingClientRect for absolute container placement
+      const stripW = mouthEl.offsetWidth || 140;
+      const aspect = stripCanvas.height / stripCanvas.width;
+      const stripH = Math.round(stripW * aspect);
+      const topPx  = mouthEl.offsetTop + mouthEl.offsetHeight;
 
       // ── Outer wrapper: clips to what's below the mouth ──────────────
-      // Positioned right at the mouth bottom edge, full strip height but
-      // overflow:hidden — so content starting at translateY(-100%) is invisible.
+      // Positioned relative to slotEl (not mouthEl) to bypass iOS Safari border-radius overflow clipping bugs!
       const wrapper = document.createElement('div');
       wrapper.id = 'emergingStripWrapper';
       Object.assign(wrapper.style, {
         position:     'absolute',
         left:         '50%',
         transform:    'translateX(-50%)',
-        top:          '100%',
-        width:        '100%',
+        top:          `${topPx}px`,
+        width:        `${stripW}px`,
         height:       `${stripH}px`,
         overflow:     'hidden',
         zIndex:       '200',
@@ -661,7 +659,7 @@ window.Printer = (function () {
       }
 
       wrapper.appendChild(img);
-      mouthEl.appendChild(wrapper);
+      slotEl.appendChild(wrapper);
 
       // Slot shimmy while printing
       slotEl.classList.add('is-printing');
