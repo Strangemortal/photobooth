@@ -246,7 +246,7 @@ export default function PreviewOverlay({
           </div>
         </div>
         
-        <div className="printer-stage__actions" style={{ marginParam: '14px', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', zIndex: 10 }}>
+        <div className="printer-stage__actions" style={{ marginTop: '14px', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', zIndex: 10 }}>
           <button 
             id="downloadBtn" 
             className={`download-btn ${hasDeveloped ? 'is-ready' : ''}`}
