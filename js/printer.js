@@ -624,10 +624,11 @@ window.Printer = (function () {
       const wrapper = document.createElement('div');
       wrapper.id = 'emergingStripWrapper';
       Object.assign(wrapper.style, {
-        position:     'fixed',
-        left:         `${mouthRect.left + (mouthRect.width - stripW) / 2}px`,
-        top:          `${mouthRect.bottom}px`,
-        width:        `${stripW}px`,
+        position:     'absolute',
+        left:         '50%',
+        transform:    'translateX(-50%)',
+        top:          '100%',
+        width:        '100%',
         height:       `${stripH}px`,
         overflow:     'hidden',
         zIndex:       '200',
@@ -652,7 +653,7 @@ window.Printer = (function () {
       });
 
       wrapper.appendChild(img);
-      document.body.appendChild(wrapper);
+      mouthEl.appendChild(wrapper);
 
       // Slot shimmy while printing
       slotEl.classList.add('is-printing');
