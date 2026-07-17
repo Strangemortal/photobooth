@@ -1,0 +1,424 @@
+/* ============================================================
+   Printer stage — post-exit, where the strip is printed
+   ============================================================ */
+
+.printer-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: radial-gradient(ellipse at 50% 60%, #1a0f08 0%, #050302 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+.printer-stage__bg {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 80px, rgba(255,200,140,0.02) 80px 81px),
+    repeating-linear-gradient(0deg, transparent 0 120px, rgba(0,0,0,0.08) 120px 121px);
+  pointer-events: none;
+}
+
+/* New HTML structure: printer-stage__panel, header, mouth, viewport */
+.printer-stage__panel {
+  position: relative;
+  z-index: 2;
+  width: min(380px, 82vw);
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+}
+
+.printer-stage__header {
+  background: linear-gradient(180deg, var(--metal-light, #b8a98c) 0%, var(--metal-dark, #7a6a55) 100%);
+  border: 2px solid var(--ink, #1a1209);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,220,160,0.2);
+}
+
+.printer-stage__lamp {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--metal-dark, #7a6a55);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
+  flex-shrink: 0;
+  transition: background-color 0.4s ease;
+}
+.printer-stage__lamp.is-printing {
+  animation: printer-lamp-active 0.6s ease-in-out infinite;
+}
+
+.printer-stage__title {
+  font-family: var(--font-display, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--cream, #f8f1e5);
+  text-shadow: 1px 1px 0 var(--ink, #1a1209);
+}
+
+/* The slot mouth where strip emerges */
+.printer-stage__mouth {
+  position: relative;
+  height: min(420px, 52vh);
+  background: linear-gradient(180deg, var(--metal, #9a8870) 0%, var(--metal-dark, #7a6a55) 100%);
+  border: 2px solid var(--ink, #1a1209);
+  border-top: none;
+  border-bottom: none;
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.7),
+    inset 4px 0 0 rgba(0,0,0,0.3),
+    inset -4px 0 0 rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.printer-stage__lip {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 52%;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,0.95),
+    0 2px 0 rgba(255,220,160,0.05);
+  z-index: 2;
+}
+
+.printer-stage__motor {
+  position: absolute;
+  top: 8px; right: 12px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--metal-light, #b8a98c), var(--metal-dark, #7a6a55));
+  border: 2px solid var(--ink, #1a1209);
+  z-index: 3;
+}
+.printer-stage__motor.is-active {
+  animation: motor-hum 0.08s linear infinite;
+}
+
+/* The strip canvas viewport fills the mouth slot */
+.printer-stage__viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.strip-physics-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  display: block;
+}
+.strip-physics-canvas:active { cursor: grabbing; }
+
+/* Instruction text below slot */
+.printer-stage__instruction {
+  font-family: var(--font-display, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: rgba(255,200,140,0.5);
+  text-align: center;
+  padding: 6px 0;
+  min-height: 1.4em;
+  background: linear-gradient(180deg, var(--metal-dark, #7a6a55) 0%, var(--ink, #1a1209) 100%);
+  border: 2px solid var(--ink, #1a1209);
+  border-top: none;
+  border-bottom: none;
+}
+.printer-stage__instruction.is-prompt {
+  color: #f0b23a;
+  text-shadow: 0 0 12px rgba(240,178,58,0.7);
+  animation: fade-rise 0.6s ease;
+}
+.printer-stage__instruction.is-pulse {
+  color: #6ef5b0;
+  text-shadow: 0 0 10px rgba(110,245,176,0.6);
+  animation: fade-rise 0.6s ease;
+}
+.printer-stage__instruction.is-success {
+  color: #6ef5b0;
+  text-shadow: 0 0 10px rgba(110,245,176,0.6);
+}
+
+/* The printer machine -------------------------------------- */
+.printer-machine {
+  position: relative;
+  z-index: 2;
+  width: min(420px, 80vw);
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.7));
+}
+
+.printer-machine__top {
+  background: linear-gradient(180deg, var(--metal-light) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,220,160,0.2);
+}
+.printer-machine__lamp {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--metal-dark);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
+}
+.printer-machine__lamp.is-active {
+  animation: printer-lamp-active 0.6s ease-in-out infinite;
+}
+.printer-machine__label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--cream);
+  text-shadow: 1px 1px 0 var(--ink);
+}
+
+/* Slot where the strip emerges ---------------------------- */
+.printer-machine__slot {
+  position: relative;
+  height: 380px;
+  background:
+    linear-gradient(180deg, var(--metal) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  border-top: none;
+  border-bottom: none;
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.7),
+    inset 4px 0 0 rgba(0,0,0,0.3),
+    inset -4px 0 0 rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+.printer-machine__slot-inner {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 30px;
+  background: #000;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,0.95),
+    0 2px 0 rgba(255,220,160,0.05);
+  z-index: 1;
+}
+.printer-machine__motor {
+  position: absolute;
+  top: 8px; right: 12px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--metal-light), var(--metal-dark));
+  border: 2px solid var(--ink);
+  z-index: 2;
+}
+.printer-machine__motor.is-active {
+  animation: motor-hum 0.08s linear infinite;
+}
+
+/* Strip canvas (where Matter.js draws the strip body) ----- */
+.strip-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  cursor: grab;
+}
+.strip-canvas:active { cursor: grabbing; }
+
+/* Panel below slot ---------------------------------------- */
+.printer-machine__panel {
+  background: linear-gradient(180deg, var(--metal-dark) 0%, var(--ink) 100%);
+  border: 2px solid var(--ink);
+  border-radius: 0 0 6px 6px;
+  padding: 14px;
+  position: relative;
+  text-align: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,160,0.1),
+    0 8px 16px rgba(0,0,0,0.5);
+}
+.printer-machine__rivet {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: radial-gradient(circle at 30% 30%, var(--metal-light), var(--ink));
+  border-radius: 50%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.6);
+}
+.printer-machine__rivet--tl { top: 6px; left: 6px; }
+.printer-machine__rivet--tr { top: 6px; right: 6px; }
+.printer-machine__rivet--bl { bottom: 6px; left: 6px; }
+.printer-machine__rivet--br { bottom: 6px; right: 6px; }
+
+.printer-machine__instruction {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: var(--tungsten);
+  text-shadow: 0 0 8px rgba(255,178,74,0.4);
+  min-height: 1em;
+}
+.printer-machine__instruction.is-prompt {
+  color: var(--neon-amber);
+  text-shadow: 0 0 12px var(--neon-amber);
+  animation: fade-rise 0.6s var(--ease-soft);
+}
+
+/* Action buttons row ------------------------------------- */
+.printer-stage__actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Download button — appears after strip removed ----------- */
+.download-btn {
+  position: relative;
+  width: 200px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-soft);
+  pointer-events: none;
+}
+.download-btn.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.download-btn__rim {
+  position: absolute; inset: 0;
+  border-radius: 30px;
+  background: linear-gradient(180deg, var(--metal-light) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-deep);
+}
+.download-btn__cap {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  border-radius: 26px;
+  background: linear-gradient(180deg, var(--tungsten) 0%, var(--tungsten-deep) 100%);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.3),
+    inset 0 -3px 6px rgba(0,0,0,0.4);
+}
+.download-btn__icon { font-size: 1.1rem; }
+.download-btn__label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+.download-btn:hover .download-btn__cap {
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.4),
+    inset 0 -3px 8px rgba(0,0,0,0.5),
+    0 0 22px rgba(255,178,74,0.6);
+}
+.download-btn:active .download-btn__cap { transform: translateY(2px); }
+.download-btn:disabled { opacity: 0; pointer-events: none; }
+
+/* New Photo button — always available after print --------- */
+.new-photo-btn {
+  position: relative;
+  width: 160px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease 0.2s, transform 0.5s var(--ease-soft) 0.2s;
+  pointer-events: none;
+}
+.new-photo-btn.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.new-photo-btn__rim {
+  position: absolute; inset: 0;
+  border-radius: 30px;
+  background: linear-gradient(180deg, var(--metal-light) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-deep);
+}
+.new-photo-btn__cap {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  border-radius: 26px;
+  background: linear-gradient(180deg, var(--metal) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  color: var(--cream);
+  box-shadow:
+    inset 0 2px 0 rgba(255,220,160,0.2),
+    inset 0 -3px 6px rgba(0,0,0,0.5);
+}
+.new-photo-btn__icon { font-size: 1rem; }
+.new-photo-btn__label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-shadow: 1px 1px 0 var(--ink);
+}
+.new-photo-btn:hover .new-photo-btn__cap {
+  box-shadow:
+    inset 0 2px 0 rgba(255,220,160,0.3),
+    inset 0 -3px 8px rgba(0,0,0,0.6),
+    0 0 16px rgba(138,106,69,0.5);
+}
+.new-photo-btn:active .new-photo-btn__cap { transform: translateY(2px); }
+
+/* Responsive --------------------------------------------- */
+@media (max-width: 600px) {
+  .printer-machine { width: 90vw; }
+  .printer-machine__slot { height: 320px; }
+  /* Action buttons inside strip-preview: stack full-width on mobile */
+  .strip-preview .printer-stage__actions {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .download-btn,
+  .new-photo-btn {
+    width: 100% !important;
+    height: 48px;
+  }
+  .download-btn__label,
+  .new-photo-btn__label {
+    font-size: 0.75rem;
+  }
+}

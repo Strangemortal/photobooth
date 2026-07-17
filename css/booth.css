@@ -1,0 +1,30 @@
+/* ============================================================
+   Booth detail styling — shared accents, rivets, wear
+   (Most booth styles live in outside.css; this file holds
+    cross-scene shared accents and any booth specifics that
+    need to override outside.css.)
+   ============================================================ */
+
+/* Reused rivet style for any riveted surface --------------- */
+.is-riveted {
+  position: relative;
+}
+.is-riveted::before,
+.is-riveted::after {
+  content: '';
+  position: absolute;
+  width: 5px; height: 5px;
+  background: radial-gradient(circle at 30% 30%, var(--metal-light), var(--ink));
+  border-radius: 50%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.6);
+  z-index: 4;
+}
+.is-riveted::before { top: 4px; left: 4px; }
+.is-riveted::after  { top: 4px; right: 4px; }
+
+/* Stencil label */
+.stencil {
+  font-family: var(--font-display);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
