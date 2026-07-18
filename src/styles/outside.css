@@ -1,0 +1,496 @@
+/* ============================================================
+   SCENE ONE — Outside the photobooth
+   ============================================================ */
+
+.scene--outside {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 4vh;
+}
+
+/* ----- Backdrop --------------------------------------------- */
+.outside__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.outside__wall {
+  position: absolute;
+  inset: 0 0 30% 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, #2a1810 0%, #160c06 70%),
+    linear-gradient(180deg, #1f1208 0%, #0c0604 100%);
+}
+.outside__wall::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 80px, rgba(255,200,140,0.012) 80px 81px),
+    repeating-linear-gradient(0deg, transparent 0 120px, rgba(0,0,0,0.06) 120px 121px);
+}
+.outside__floor {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 30%;
+  background:
+    linear-gradient(180deg, #0e0805 0%, #1a0f08 100%);
+  border-top: 1px solid rgba(255,180,80,0.06);
+}
+.outside__floor::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 60px, rgba(255,200,140,0.02) 60px 61px),
+    repeating-linear-gradient(180deg, transparent 0 30px, rgba(0,0,0,0.18) 30px 31px);
+  transform: perspective(400px) rotateX(60deg);
+  transform-origin: top;
+}
+.outside__vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 30%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   The booth machine
+   ============================================================ */
+.booth {
+  position: relative;
+  z-index: 2;
+  width: min(880px, 92vw);
+  height: 70vh;
+  max-height: 760px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  animation: machine-vibe 5s ease-in-out infinite;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.7));
+}
+
+/* Cornice / roof -------------------------------------------- */
+.booth__cornice {
+  position: relative;
+  height: 22px;
+  background:
+    linear-gradient(180deg, var(--metal-light) 0%, var(--metal) 60%, var(--metal-dark) 100%);
+  border-radius: 4px 4px 0 0;
+  border: 2px solid var(--ink);
+  border-bottom: none;
+  box-shadow: inset 0 2px 0 rgba(255,220,160,0.2);
+}
+.booth__cornice::before,
+.booth__cornice::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 30px; height: 12px;
+  background: linear-gradient(180deg, var(--metal-light), var(--metal-dark));
+  border: 2px solid var(--ink);
+  border-radius: 3px 3px 0 0;
+}
+.booth__cornice::before { left: 12%; }
+.booth__cornice::after  { right: 12%; }
+.booth__cornice-trim {
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 6px;
+  background: linear-gradient(180deg, var(--metal), var(--metal-dark));
+  border: 2px solid var(--ink);
+  border-top: none;
+}
+
+/* Body ------------------------------------------------------ */
+.booth__body {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr;
+  background:
+    linear-gradient(180deg, #4a3422 0%, #38261a 50%, #2a1a10 100%);
+  border-left: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,0.5),
+    inset 2px 0 0 rgba(255,200,140,0.05),
+    inset -2px 0 0 rgba(0,0,0,0.4);
+}
+
+.booth__body::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,200,140,0.05) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 80%, rgba(0,0,0,0.25) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent 0 4px, rgba(0,0,0,0.02) 4px 5px);
+  z-index: 5;
+}
+
+.booth__column {
+  position: relative;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  z-index: 2;
+}
+.booth__panel {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background:
+    linear-gradient(180deg, var(--metal) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.4),
+    inset 2px 2px 0 rgba(255,200,140,0.06);
+}
+.booth__panel--riveted::before,
+.booth__panel--riveted::after {
+  content: '';
+  position: absolute;
+  width: 6px; height: 6px;
+  background: radial-gradient(circle at 30% 30%, var(--metal-light), var(--ink));
+  border-radius: 50%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.6);
+}
+.booth__panel--riveted::before { top: 8px; left: 8px; }
+.booth__panel--riveted::after  { top: 8px; right: 8px; }
+
+.booth__vent {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 70%;
+}
+.booth__vent span {
+  display: block;
+  height: 26px;
+  background: linear-gradient(180deg, var(--ink) 0%, #050302 100%);
+  border-radius: 2px;
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(255,200,140,0.05);
+}
+
+/* Mustard Yellow Single-Color Randomize Button ---------------- */
+.booth__btn-randomize {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 90%;
+  padding: 10px 16px;
+  background-color: #d97706;
+  border: 2px solid #1a1209;
+  border-radius: 22px;
+  color: #fff;
+  font-family: 'Nority', var(--font-display);
+  font-size: 0.85rem;
+  font-weight: bold;
+  letter-spacing: 0.15em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.booth__btn-randomize-icon {
+  font-size: 1.1rem;
+}
+
+.booth__btn-randomize:hover {
+  background-color: #b45309;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.booth__btn-randomize:active {
+  transform: translateY(1px);
+}
+
+/* ============================================================
+   Full-Width Neon Marquee Sign with Break & Swing Drop Effect
+   ============================================================ */
+.neon--full-width {
+  position: absolute;
+  top: -76px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  transform-origin: 92% 0%;
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.neon--full-width.is-broken {
+  transform: rotate(26deg) translateY(24px);
+}
+
+.neon__chain {
+  position: absolute;
+  top: -18px;
+  width: 3px;
+  height: 22px;
+  background: linear-gradient(180deg, var(--metal-light, #b8a98c), var(--metal-dark, #7a6a55));
+  box-shadow: 1px 0 0 rgba(0,0,0,0.5);
+  z-index: 1;
+  transition: height 0.3s ease, opacity 0.3s ease;
+}
+.neon__chain--left { left: 8%; }
+.neon__chain--right { right: 8%; }
+
+.neon--full-width.is-broken .neon__chain--left {
+  height: 6px;
+  opacity: 0.3;
+}
+
+.neon--full-width .neon__backplate {
+  position: absolute;
+  inset: -4px 0;
+  background: linear-gradient(180deg, #1a0f08 0%, #0a0604 100%);
+  border: 3px solid var(--metal-brass-light, #cfa861);
+  border-radius: 8px;
+  z-index: -1;
+  box-shadow: 0 0 25px rgba(0,0,0,0.85), inset 0 0 12px rgba(207,168,97,0.3);
+}
+
+.neon--full-width .neon__tube {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 0;
+  font-family: 'Nority', sans-serif !important;
+  font-size: clamp(2.4rem, 5vw, 4.2rem) !important;
+  letter-spacing: 0.2em;
+  color: var(--neon-pink);
+  text-shadow:
+    0 0 10px var(--neon-pink),
+    0 0 25px var(--neon-pink),
+    0 0 50px rgba(255, 0, 102, 0.7);
+  animation: neon-glow 3s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+.neon__sparks {
+  position: absolute;
+  top: -10px;
+  left: 6%;
+  font-size: 1.4rem;
+  pointer-events: none;
+  animation: spark-flash 0.3s steps(1) infinite;
+}
+
+@keyframes spark-flash {
+  0%, 100% { opacity: 1; transform: scale(1.2); }
+  50% { opacity: 0.2; transform: scale(0.8); }
+}
+
+/* Vending Machine Interactive Decal -------------------------- */
+.booth-vending-decal {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.booth-vending-decal:hover {
+  transform: scale(1.05);
+  filter: brightness(1.15);
+}
+.booth-vending-decal.is-dispensing {
+  animation: vending-shake 0.4s ease;
+}
+
+.vending-coin-anim {
+  position: absolute;
+  top: 40%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffaa00;
+  color: #000;
+  font-family: 'Nority', sans-serif;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 14px;
+  box-shadow: 0 0 12px rgba(255,170,0,0.8);
+  animation: coin-pop 0.8s ease forwards;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@keyframes vending-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px) rotate(-2deg); }
+  75% { transform: translateX(4px) rotate(2deg); }
+}
+
+@keyframes coin-pop {
+  0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+  50% { transform: translate(-50%, -30px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -10px) scale(1); opacity: 0; }
+}
+
+/* ============================================================
+   Booth entrance + curtain frame
+   ============================================================ */
+.booth__entrance {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+.entrance__frame {
+  position: relative;
+  width: 100%;
+  margin: 16px 0 0;
+  background: var(--velvet-deep);
+  border: 2px solid var(--ink);
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.85),
+    inset 4px 0 0 rgba(0,0,0,0.4),
+    inset -4px 0 0 rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+.entrance__frame::before,
+.entrance__frame::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 8px;
+  background: linear-gradient(180deg, var(--metal-light), var(--metal-dark));
+  border: 2px solid var(--ink);
+  z-index: 3;
+}
+.entrance__frame::before { left: -2px; }
+.entrance__frame::after  { right: -2px; }
+
+.entrance__dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, #1a0a04 0%, #000 100%);
+  z-index: 1;
+}
+.entrance__interior-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, #2a1810 0%, #000 100%);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+.entrance__interior-dark.is-visible { opacity: 1; }
+
+/* Booth Base & Feet ------------------------------------------- */
+.booth__base {
+  position: relative;
+  height: 24px;
+  background: linear-gradient(180deg, var(--metal-dark) 0%, #0c0806 100%);
+  border: 2px solid var(--ink);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 5;
+}
+
+.booth__foot {
+  width: 44px;
+  height: 18px;
+  background: linear-gradient(180deg, #3a3f4a 0%, #12141a 100%);
+  border: 2px solid var(--ink);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.8);
+}
+
+/* Printer slot in right booth column ------------------------- */
+.printer-slot {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(180deg, var(--metal-medium) 0%, var(--metal-dark) 100%);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+  cursor: pointer;
+}
+
+.printer-slot__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printer-slot__lamp {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #555;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+.printer-slot__lamp.is-printing {
+  animation: printer-lamp-active 0.6s ease-in-out infinite;
+}
+
+.printer-slot__label {
+  font-family: 'Nority', var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: #fff;
+  flex: 1;
+}
+
+.printer-slot__motor {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #333;
+}
+.printer-slot__motor.is-active {
+  animation: motor-hum 0.08s linear infinite;
+}
+
+.printer-slot__mouth {
+  position: relative;
+  height: 140px;
+  background: #000;
+  border: 2px solid #111;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.9);
+}
+
+.printer-slot__lip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 12px;
+  background: #1a1a1a;
+  border-radius: 0 0 6px 6px;
+  z-index: 3;
+}
+
+.printer-slot__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.printer-slot__prompt {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #39ff14;
+  text-align: center;
+}

@@ -1,0 +1,371 @@
+/* ============================================================
+   Printer stage & Photo Bin Slot styling
+   ============================================================ */
+
+.printer-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: radial-gradient(ellipse at 50% 60%, #1a0f08 0%, #050302 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.printer-stage__bg {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 80px, rgba(255,200,140,0.02) 80px 81px),
+    repeating-linear-gradient(0deg, transparent 0 120px, rgba(0,0,0,0.08) 120px 121px);
+  pointer-events: none;
+}
+
+.printer-stage__panel {
+  position: relative;
+  z-index: 2;
+  width: min(380px, 86vw);
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+}
+
+.printer-stage__header {
+  background: linear-gradient(180deg, var(--metal-light, #b8a98c) 0%, var(--metal-dark, #7a6a55) 100%);
+  border: 2px solid var(--ink, #1a1209);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,220,160,0.2);
+}
+
+.printer-stage__lamp {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--metal-dark, #7a6a55);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
+  flex-shrink: 0;
+  transition: background-color 0.4s ease;
+}
+.printer-stage__lamp.is-printing {
+  animation: printer-lamp-active 0.6s ease-in-out infinite;
+}
+
+.printer-stage__title {
+  font-family: 'Nority', var(--font-display, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--cream, #f8f1e5);
+  text-shadow: 1px 1px 0 var(--ink, #1a1209);
+}
+
+.printer-stage__mouth {
+  position: relative;
+  height: min(400px, 48vh);
+  background: linear-gradient(180deg, var(--metal, #9a8870) 0%, var(--metal-dark, #7a6a55) 100%);
+  border: 2px solid var(--ink, #1a1209);
+  border-top: none;
+  border-bottom: none;
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.7),
+    inset 4px 0 0 rgba(0,0,0,0.3),
+    inset -4px 0 0 rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.printer-stage__lip {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 52%;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,0.95),
+    0 2px 0 rgba(255,220,160,0.05);
+  z-index: 2;
+}
+
+.printer-stage__motor {
+  position: absolute;
+  top: 8px; right: 12px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--metal-light, #b8a98c), var(--metal-dark, #7a6a55));
+  border: 2px solid var(--ink, #1a1209);
+  z-index: 3;
+}
+.printer-stage__motor.is-active {
+  animation: motor-hum 0.08s linear infinite;
+}
+
+.printer-stage__viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.strip-physics-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  display: block;
+}
+.strip-physics-canvas:active { cursor: grabbing; }
+
+.printer-stage__instruction {
+  font-family: 'Nority', var(--font-display, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,200,140,0.5);
+  text-align: center;
+  padding: 8px 0;
+  min-height: 1.4em;
+  background: linear-gradient(180deg, var(--metal-dark, #7a6a55) 0%, var(--ink, #1a1209) 100%);
+  border: 2px solid var(--ink, #1a1209);
+  border-top: none;
+  border-bottom: none;
+}
+.printer-stage__instruction.is-prompt {
+  color: #f0b23a;
+  text-shadow: 0 0 12px rgba(240,178,58,0.7);
+  animation: fade-rise 0.6s ease;
+}
+.printer-stage__instruction.is-pulse {
+  color: #6ef5b0;
+  text-shadow: 0 0 10px rgba(110,245,176,0.6);
+  animation: fade-rise 0.6s ease;
+}
+
+/* ============================================================
+   Strip Preview & Customizer Modal — In-Place Zoom & Blur
+   ============================================================ */
+
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(10, 7, 18, 0.88);
+  backdrop-filter: blur(12px);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  cursor: pointer;
+}
+
+.preview-overlay.is-zoomed-blur {
+  background: rgba(5, 3, 10, 0.95);
+  backdrop-filter: blur(28px);
+}
+
+.strip-preview--compact {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: min(360px, 90vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #12141a;
+  border: 2px solid var(--metal-brass-light, #cfa861);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.95), 0 0 25px rgba(207,168,97,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.strip-preview.is-zoomed {
+  transform: translate(-50%, -50%) scale(1.32);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.98), 0 0 45px rgba(255,170,0,0.45);
+  border-color: #ffaa00;
+}
+
+.strip-preview.is-zoomed .strip-preview__form,
+.strip-preview.is-zoomed .strip-preview__compact-actions {
+  opacity: 0.12;
+  pointer-events: none;
+  filter: blur(2px);
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.strip-preview__eyebrow {
+  font-family: 'Nority', var(--font-display, sans-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  color: var(--metal-brass-light, #cfa861);
+  text-align: center;
+}
+
+.strip-preview__canvas-container {
+  position: relative;
+  cursor: zoom-in;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+  transition: transform 0.25s ease;
+}
+
+.strip-preview.is-zoomed .strip-preview__canvas-container {
+  cursor: zoom-out;
+  transform: scale(1.1);
+}
+
+.strip-preview__canvas {
+  display: block;
+  background: #fff;
+}
+
+.strip-preview__form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.strip-preview__input {
+  width: 100%;
+  padding: 8px 12px;
+  background: #07050b;
+  border: 1.5px solid #3e4452;
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'Nority', var(--font-display);
+  font-size: 0.8rem;
+  outline: none;
+}
+.strip-preview__input:focus {
+  border-color: #cfa861;
+}
+
+.strip-preview__toggles-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  background: #07050b;
+  border: 1px solid #2d323e;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.strip-preview__checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cfa861;
+  font-family: 'Nority', var(--font-display);
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.strip-preview__checkbox {
+  accent-color: #ffaa00;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.strip-preview__emoji-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #07050b;
+  border: 1px solid #2d323e;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.strip-preview__filter-title {
+  font-family: 'Nority', var(--font-display);
+  font-size: 0.75rem;
+  color: #cfa861;
+}
+
+.strip-preview__emoji-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 4px;
+}
+
+.strip-preview__emoji-btn {
+  background: #141720;
+  border: 1.5px solid #2e3444;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.strip-preview__emoji-btn:hover {
+  transform: scale(1.15);
+  border-color: #ffaa00;
+}
+.strip-preview__emoji-btn.is-active {
+  border-color: #ffaa00;
+  background: #2b2512;
+  box-shadow: 0 0 10px rgba(255,170,0,0.5);
+  transform: scale(1.1);
+}
+
+/* Solid Single-Color Action Buttons */
+.strip-preview__compact-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.strip-preview__btn {
+  flex: 1;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 22px;
+  border: 1.5px solid #000;
+  font-family: 'Nority', var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.strip-preview__btn--download {
+  background-color: #e11d48;
+  color: #fff;
+  border-color: #f43f5e;
+}
+
+.strip-preview__btn--retake {
+  background-color: #0284c7;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
+.strip-preview__btn:hover {
+  transform: scale(1.04);
+  filter: brightness(1.12);
+}
+
+.strip-preview__btn:active {
+  transform: translateY(2px);
+}
