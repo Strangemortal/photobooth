@@ -51,7 +51,7 @@ export default function App() {
   const [isPrinting, setIsPrinting] = useState(false);
   const [printerLampStatus, setPrinterLampStatus] = useState('idle'); // 'idle' | 'printing' | 'ready'
   const [motorActive, setMotorActive] = useState(false);
-  const [instructionText, setInstructionText] = useState('CLICK TO PRINT');
+  const [instructionText, setInstructionText] = useState('');
   const [stripClaimed, setStripClaimed] = useState(false);
 
   // Strip Customizer Preview Modal State
@@ -326,7 +326,7 @@ export default function App() {
     if (isPrinting || printerLampStatus !== 'ready') return;
     setStripClaimed(true);
     setPrinterLampStatus('idle');
-    setInstructionText('CLICK TO PRINT');
+    setInstructionText('');
     setPreviewVisible(true);
 
     // Render current strip into modal preview canvas
