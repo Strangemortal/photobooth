@@ -100,9 +100,3 @@ photobooth/
    npm run build
    ```
    The optimized production bundle will be generated in the `dist/` directory.
-
----
-
-## 📄 License
-
-MIT © [grvsnh](https://github.com/grvsnh)
