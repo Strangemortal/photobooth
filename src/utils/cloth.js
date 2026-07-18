@@ -87,9 +87,16 @@ export class Cloth {
 
     const fontSize = Math.min(240, Math.round(canvas.width * 0.70));
     ctx.font = `bold ${fontSize}px "Yu Mincho", "Mincho", "SimSun", "STSong", serif`;
-    ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
+    // Golden border/outline
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 16;
+    ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
+
+    // White fill
+    ctx.fillStyle = '#ffffff';
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
     const texture = new THREE.CanvasTexture(canvas);
